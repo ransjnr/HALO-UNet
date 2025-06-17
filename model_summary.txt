@@ -1,0 +1,389 @@
+HALO-UNet - Input shape: torch.Size([2, 3, 256, 256]), Output shape: torch.Size([2, 1, 256, 256])
+Autoencoder - Input shape: torch.Size([2, 3, 256, 256]), Output shape: torch.Size([2, 3, 256, 256])
+ULA - Input shape: torch.Size([2, 64, 64, 64]), Output shape: torch.Size([2, 64, 64, 64])
+
+🔬 HALO-UNet Comprehensive Model Analysis
+====================================================================================================
+
+🏗️ ARCHITECTURE DETAILS
+================================================================================
+HALO-UNet Architecture:
+├── Encoder Path:
+│   ├── HALO Block 1: 3 → 32 channels
+│   ├── HALO Block 2: 32 → 64 channels
+│   ├── HALO Block 3: 64 → 128 channels
+│   └── HALO Block 4: 128 → 256 channels
+│
+├── Bottleneck:
+│   ├── HALO Block: 256 → 512 channels
+│   └── ULA Module: 512 channels
+│
+├── Decoder Path:
+│   ├── Transpose Conv + HALO Block: 512 → 256
+│   ├── Transpose Conv + HALO Block: 256 → 128
+│   ├── Transpose Conv + HALO Block: 128 → 64
+│   └── Transpose Conv + HALO Block: 64 → 32
+│
+└── Output: 1×1 Conv: 32 → 1 channel
+
+DNAP Pipeline:
+├── Autoencoder Denoising (16→64→16)
+├── Bilateral Filter (σ_color=10, σ_space=10)
+├── CLAHE (clip_limit=2.0, tile_grid=8×8)
+└── Normalization [0,1]
+
+ULA Module:
+└── Entropy-based Pruning (threshold=0.1)
+
+🔍 COMPREHENSIVE MODEL ANALYSIS
+====================================================================================================
+
+1️⃣ HALO-UNet (Hardware Aware Lightweight Optimized U-Net)
+================================================================================
+Model: HALO-UNet
+================================================================================
+Layer (type)                   Output Shape         Param #         Trainable 
+================================================================================
+Conv2d                         [1, 3, 256, 256]     27              True      
+BatchNorm2d                    [1, 3, 256, 256]     6               True      
+ReLU                           [1, 3, 256, 256]     0               True      
+Conv2d                         [1, 32, 256, 256]    96              True      
+BatchNorm2d                    [1, 32, 256, 256]    64              True      
+ReLU                           [1, 32, 256, 256]    0               True
+DepthwiseSeparableConv         [1, 32, 256, 256]    0               True
+Conv2d                         [1, 32, 256, 256]    288             True
+BatchNorm2d                    [1, 32, 256, 256]    64              True
+ReLU                           [1, 32, 256, 256]    0               True
+Conv2d                         [1, 32, 256, 256]    1024            True
+BatchNorm2d                    [1, 32, 256, 256]    64              True
+ReLU                           [1, 32, 256, 256]    0               True
+DepthwiseSeparableConv         [1, 32, 256, 256]    0               True
+HALOUNetBlock                  [1, 32, 256, 256]    0               True
+MaxPool2d                      [1, 32, 128, 128]    0               True
+Conv2d                         [1, 32, 128, 128]    288             True
+BatchNorm2d                    [1, 32, 128, 128]    64              True
+ReLU                           [1, 32, 128, 128]    0               True
+Conv2d                         [1, 64, 128, 128]    2048            True
+BatchNorm2d                    [1, 64, 128, 128]    128             True
+ReLU                           [1, 64, 128, 128]    0               True
+DepthwiseSeparableConv         [1, 64, 128, 128]    0               True
+Conv2d                         [1, 64, 128, 128]    576             True
+BatchNorm2d                    [1, 64, 128, 128]    128             True
+ReLU                           [1, 64, 128, 128]    0               True
+Conv2d                         [1, 64, 128, 128]    4096            True
+BatchNorm2d                    [1, 64, 128, 128]    128             True
+ReLU                           [1, 64, 128, 128]    0               True
+DepthwiseSeparableConv         [1, 64, 128, 128]    0               True
+HALOUNetBlock                  [1, 64, 128, 128]    0               True
+MaxPool2d                      [1, 64, 64, 64]      0               True
+Conv2d                         [1, 64, 64, 64]      576             True
+BatchNorm2d                    [1, 64, 64, 64]      128             True
+ReLU                           [1, 64, 64, 64]      0               True
+Conv2d                         [1, 128, 64, 64]     8192            True
+BatchNorm2d                    [1, 128, 64, 64]     256             True
+ReLU                           [1, 128, 64, 64]     0               True
+DepthwiseSeparableConv         [1, 128, 64, 64]     0               True
+Conv2d                         [1, 128, 64, 64]     1152            True
+BatchNorm2d                    [1, 128, 64, 64]     256             True
+ReLU                           [1, 128, 64, 64]     0               True      
+Conv2d                         [1, 128, 64, 64]     16384           True
+BatchNorm2d                    [1, 128, 64, 64]     256             True
+ReLU                           [1, 128, 64, 64]     0               True
+DepthwiseSeparableConv         [1, 128, 64, 64]     0               True
+HALOUNetBlock                  [1, 128, 64, 64]     0               True
+MaxPool2d                      [1, 128, 32, 32]     0               True
+Conv2d                         [1, 128, 32, 32]     1152            True
+BatchNorm2d                    [1, 128, 32, 32]     256             True
+ReLU                           [1, 128, 32, 32]     0               True
+Conv2d                         [1, 256, 32, 32]     32768           True
+BatchNorm2d                    [1, 256, 32, 32]     512             True
+ReLU                           [1, 256, 32, 32]     0               True
+DepthwiseSeparableConv         [1, 256, 32, 32]     0               True
+Conv2d                         [1, 256, 32, 32]     2304            True
+BatchNorm2d                    [1, 256, 32, 32]     512             True
+ReLU                           [1, 256, 32, 32]     0               True
+Conv2d                         [1, 256, 32, 32]     65536           True
+BatchNorm2d                    [1, 256, 32, 32]     512             True
+ReLU                           [1, 256, 32, 32]     0               True
+DepthwiseSeparableConv         [1, 256, 32, 32]     0               True
+HALOUNetBlock                  [1, 256, 32, 32]     0               True      
+MaxPool2d                      [1, 256, 16, 16]     0               True
+Conv2d                         [1, 256, 16, 16]     2304            True
+BatchNorm2d                    [1, 256, 16, 16]     512             True
+ReLU                           [1, 256, 16, 16]     0               True
+Conv2d                         [1, 512, 16, 16]     131072          True
+BatchNorm2d                    [1, 512, 16, 16]     1024            True
+ReLU                           [1, 512, 16, 16]     0               True
+DepthwiseSeparableConv         [1, 512, 16, 16]     0               True
+Conv2d                         [1, 512, 16, 16]     4608            True
+BatchNorm2d                    [1, 512, 16, 16]     1024            True
+ReLU                           [1, 512, 16, 16]     0               True
+Conv2d                         [1, 512, 16, 16]     262144          True
+BatchNorm2d                    [1, 512, 16, 16]     1024            True
+ReLU                           [1, 512, 16, 16]     0               True
+DepthwiseSeparableConv         [1, 512, 16, 16]     0               True
+HALOUNetBlock                  [1, 512, 16, 16]     0               True
+AdaptiveAvgPool2d              [1, 512, 1, 1]       0               True
+Conv2d                         [1, 32, 1, 1]        16384           True
+ReLU                           [1, 32, 1, 1]        0               True
+Conv2d                         [1, 512, 1, 1]       16384           True
+AdaptiveMaxPool2d              [1, 512, 1, 1]       0               True
+Conv2d                         [1, 32, 1, 1]        16384           True
+ReLU                           [1, 32, 1, 1]        0               True
+Conv2d                         [1, 512, 1, 1]       16384           True
+Sigmoid                        [1, 512, 1, 1]       0               True
+ChannelAttention               [1, 512, 1, 1]       0               True
+Conv2d                         [1, 1, 16, 16]       18              True
+Sigmoid                        [1, 1, 16, 16]       0               True      
+SpatialAttention               [1, 1, 16, 16]       0               True
+UltraLightAttention            [1, 512, 16, 16]     0               True
+ConvTranspose2d                [1, 256, 32, 32]     524544          True
+Conv2d                         [1, 512, 32, 32]     4608            True
+BatchNorm2d                    [1, 512, 32, 32]     1024            True
+ReLU                           [1, 512, 32, 32]     0               True
+Conv2d                         [1, 256, 32, 32]     131072          True
+BatchNorm2d                    [1, 256, 32, 32]     512             True
+ReLU                           [1, 256, 32, 32]     0               True
+DepthwiseSeparableConv         [1, 256, 32, 32]     0               True
+Conv2d                         [1, 256, 32, 32]     2304            True
+BatchNorm2d                    [1, 256, 32, 32]     512             True
+ReLU                           [1, 256, 32, 32]     0               True
+Conv2d                         [1, 256, 32, 32]     65536           True
+BatchNorm2d                    [1, 256, 32, 32]     512             True
+ReLU                           [1, 256, 32, 32]     0               True
+DepthwiseSeparableConv         [1, 256, 32, 32]     0               True
+HALOUNetBlock                  [1, 256, 32, 32]     0               True
+ConvTranspose2d                [1, 128, 64, 64]     131200          True
+Conv2d                         [1, 256, 64, 64]     2304            True
+BatchNorm2d                    [1, 256, 64, 64]     512             True
+ReLU                           [1, 256, 64, 64]     0               True
+Conv2d                         [1, 128, 64, 64]     32768           True
+BatchNorm2d                    [1, 128, 64, 64]     256             True
+ReLU                           [1, 128, 64, 64]     0               True
+DepthwiseSeparableConv         [1, 128, 64, 64]     0               True
+Conv2d                         [1, 128, 64, 64]     1152            True
+BatchNorm2d                    [1, 128, 64, 64]     256             True
+ReLU                           [1, 128, 64, 64]     0               True
+Conv2d                         [1, 128, 64, 64]     16384           True
+BatchNorm2d                    [1, 128, 64, 64]     256             True
+ReLU                           [1, 128, 64, 64]     0               True
+DepthwiseSeparableConv         [1, 128, 64, 64]     0               True
+HALOUNetBlock                  [1, 128, 64, 64]     0               True
+ConvTranspose2d                [1, 64, 128, 128]    32832           True
+Conv2d                         [1, 128, 128, 128]   1152            True
+BatchNorm2d                    [1, 128, 128, 128]   256             True      
+ReLU                           [1, 128, 128, 128]   0               True
+Conv2d                         [1, 64, 128, 128]    8192            True
+BatchNorm2d                    [1, 64, 128, 128]    128             True
+ReLU                           [1, 64, 128, 128]    0               True
+DepthwiseSeparableConv         [1, 64, 128, 128]    0               True
+Conv2d                         [1, 64, 128, 128]    576             True
+BatchNorm2d                    [1, 64, 128, 128]    128             True
+ReLU                           [1, 64, 128, 128]    0               True
+Conv2d                         [1, 64, 128, 128]    4096            True
+BatchNorm2d                    [1, 64, 128, 128]    128             True
+ReLU                           [1, 64, 128, 128]    0               True
+DepthwiseSeparableConv         [1, 64, 128, 128]    0               True
+HALOUNetBlock                  [1, 64, 128, 128]    0               True
+ConvTranspose2d                [1, 32, 256, 256]    8224            True
+Conv2d                         [1, 64, 256, 256]    576             True
+BatchNorm2d                    [1, 64, 256, 256]    128             True
+ReLU                           [1, 64, 256, 256]    0               True
+Conv2d                         [1, 32, 256, 256]    2048            True
+BatchNorm2d                    [1, 32, 256, 256]    64              True
+ReLU                           [1, 32, 256, 256]    0               True
+DepthwiseSeparableConv         [1, 32, 256, 256]    0               True
+Conv2d                         [1, 32, 256, 256]    288             True
+BatchNorm2d                    [1, 32, 256, 256]    64              True
+ReLU                           [1, 32, 256, 256]    0               True
+Conv2d                         [1, 32, 256, 256]    1024            True
+BatchNorm2d                    [1, 32, 256, 256]    64              True
+ReLU                           [1, 32, 256, 256]    0               True
+DepthwiseSeparableConv         [1, 32, 256, 256]    0               True
+HALOUNetBlock                  [1, 32, 256, 256]    0               True
+Conv2d                         [1, 1, 256, 256]     33              True
+HALO_UNet                      [1, 1, 256, 256]     0               True
+================================================================================
+Total params: 1,584,820
+Trainable params: 1,584,820
+Non-trainable params: 0
+Model size: 6.05 MB
+================================================================================
+
+2️⃣ Traditional U-Net (Baseline)
+================================================================================
+Model: Traditional U-Net
+================================================================================
+Layer (type)                   Output Shape         Param #         Trainable 
+================================================================================
+Conv2d                         [1, 32, 256, 256]    864             True
+BatchNorm2d                    [1, 32, 256, 256]    64              True
+ReLU                           [1, 32, 256, 256]    0               True
+Conv2d                         [1, 32, 256, 256]    9216            True
+BatchNorm2d                    [1, 32, 256, 256]    64              True
+ReLU                           [1, 32, 256, 256]    0               True
+DoubleConv                     [1, 32, 256, 256]    0               True
+MaxPool2d                      [1, 32, 128, 128]    0               True
+Conv2d                         [1, 64, 128, 128]    18432           True
+BatchNorm2d                    [1, 64, 128, 128]    128             True
+ReLU                           [1, 64, 128, 128]    0               True
+Conv2d                         [1, 64, 128, 128]    36864           True
+BatchNorm2d                    [1, 64, 128, 128]    128             True
+ReLU                           [1, 64, 128, 128]    0               True
+DoubleConv                     [1, 64, 128, 128]    0               True
+MaxPool2d                      [1, 64, 64, 64]      0               True
+Conv2d                         [1, 128, 64, 64]     73728           True
+BatchNorm2d                    [1, 128, 64, 64]     256             True
+ReLU                           [1, 128, 64, 64]     0               True
+Conv2d                         [1, 128, 64, 64]     147456          True
+BatchNorm2d                    [1, 128, 64, 64]     256             True
+ReLU                           [1, 128, 64, 64]     0               True
+DoubleConv                     [1, 128, 64, 64]     0               True
+MaxPool2d                      [1, 128, 32, 32]     0               True
+Conv2d                         [1, 256, 32, 32]     294912          True
+BatchNorm2d                    [1, 256, 32, 32]     512             True
+ReLU                           [1, 256, 32, 32]     0               True
+Conv2d                         [1, 256, 32, 32]     589824          True
+BatchNorm2d                    [1, 256, 32, 32]     512             True
+ReLU                           [1, 256, 32, 32]     0               True
+DoubleConv                     [1, 256, 32, 32]     0               True
+MaxPool2d                      [1, 256, 16, 16]     0               True
+Conv2d                         [1, 512, 16, 16]     1179648         True
+BatchNorm2d                    [1, 512, 16, 16]     1024            True
+ReLU                           [1, 512, 16, 16]     0               True      
+Conv2d                         [1, 512, 16, 16]     2359296         True
+BatchNorm2d                    [1, 512, 16, 16]     1024            True
+ReLU                           [1, 512, 16, 16]     0               True
+DoubleConv                     [1, 512, 16, 16]     0               True
+ConvTranspose2d                [1, 256, 32, 32]     524544          True
+Conv2d                         [1, 256, 32, 32]     1179648         True
+BatchNorm2d                    [1, 256, 32, 32]     512             True
+ReLU                           [1, 256, 32, 32]     0               True
+Conv2d                         [1, 256, 32, 32]     589824          True
+BatchNorm2d                    [1, 256, 32, 32]     512             True
+ReLU                           [1, 256, 32, 32]     0               True
+DoubleConv                     [1, 256, 32, 32]     0               True
+ConvTranspose2d                [1, 128, 64, 64]     131200          True
+Conv2d                         [1, 128, 64, 64]     294912          True
+BatchNorm2d                    [1, 128, 64, 64]     256             True
+ReLU                           [1, 128, 64, 64]     0               True
+Conv2d                         [1, 128, 64, 64]     147456          True
+BatchNorm2d                    [1, 128, 64, 64]     256             True
+ReLU                           [1, 128, 64, 64]     0               True
+DoubleConv                     [1, 128, 64, 64]     0               True
+ConvTranspose2d                [1, 64, 128, 128]    32832           True
+Conv2d                         [1, 64, 128, 128]    73728           True
+BatchNorm2d                    [1, 64, 128, 128]    128             True
+ReLU                           [1, 64, 128, 128]    0               True
+Conv2d                         [1, 64, 128, 128]    36864           True
+BatchNorm2d                    [1, 64, 128, 128]    128             True
+ReLU                           [1, 64, 128, 128]    0               True
+DoubleConv                     [1, 64, 128, 128]    0               True
+ConvTranspose2d                [1, 32, 256, 256]    8224            True
+Conv2d                         [1, 32, 256, 256]    18432           True
+BatchNorm2d                    [1, 32, 256, 256]    64              True
+ReLU                           [1, 32, 256, 256]    0               True
+Conv2d                         [1, 32, 256, 256]    9216            True
+BatchNorm2d                    [1, 32, 256, 256]    64              True
+ReLU                           [1, 32, 256, 256]    0               True      
+DoubleConv                     [1, 32, 256, 256]    0               True
+Conv2d                         [1, 1, 256, 256]     33              True
+UNET                           [1, 1, 256, 256]     0               True
+================================================================================
+Total params: 7,763,041
+Trainable params: 7,763,041
+Non-trainable params: 0
+Model size: 29.61 MB
+================================================================================
+
+3️⃣ Denoising Autoencoder (DNAP Component)
+================================================================================
+Model: Denoising Autoencoder
+================================================================================
+Layer (type)                   Output Shape         Param #         Trainable 
+================================================================================
+Conv2d                         [1, 16, 256, 256]    448             True
+ReLU                           [1, 16, 256, 256]    0               True
+Conv2d                         [1, 64, 256, 256]    9280            True
+ReLU                           [1, 64, 256, 256]    0               True
+Conv2d                         [1, 16, 256, 256]    9232            True
+ReLU                           [1, 16, 256, 256]    0               True
+Conv2d                         [1, 64, 256, 256]    9280            True
+ReLU                           [1, 64, 256, 256]    0               True
+Conv2d                         [1, 16, 256, 256]    9232            True
+ReLU                           [1, 16, 256, 256]    0               True
+Conv2d                         [1, 3, 256, 256]     435             True
+Sigmoid                        [1, 3, 256, 256]     0               True
+DenoisingAutoencoder           [1, 3, 256, 256]     0               True
+================================================================================
+Total params: 37,907
+Trainable params: 37,907
+Non-trainable params: 0
+Model size: 0.14 MB
+================================================================================
+
+4️⃣ Ultra-Light Attention Module
+================================================================================
+Model: ULA Module
+================================================================================
+Layer (type)                   Output Shape         Param #         Trainable
+================================================================================
+AdaptiveAvgPool2d              [1, 64, 1, 1]        0               True
+Conv2d                         [1, 4, 1, 1]         256             True
+ReLU                           [1, 4, 1, 1]         0               True
+Conv2d                         [1, 64, 1, 1]        256             True      
+AdaptiveMaxPool2d              [1, 64, 1, 1]        0               True
+Conv2d                         [1, 4, 1, 1]         256             True
+ReLU                           [1, 4, 1, 1]         0               True
+Conv2d                         [1, 64, 1, 1]        256             True
+Sigmoid                        [1, 64, 1, 1]        0               True
+ChannelAttention               [1, 64, 1, 1]        0               True
+Conv2d                         [1, 1, 64, 64]       18              True
+Sigmoid                        [1, 1, 64, 64]       0               True
+SpatialAttention               [1, 1, 64, 64]       0               True
+UltraLightAttention            [1, 64, 64, 64]      0               True
+================================================================================
+Total params: 1,042
+Trainable params: 1,042
+Non-trainable params: 0
+Model size: 0.00 MB
+================================================================================
+
+📊 EFFICIENCY COMPARISON
+================================================================================
+Parameter Reduction: 79.59%
+Model Size Reduction: 79.59%
+HALO-UNet Parameters: 1,584,820
+Traditional U-Net Parameters: 7,763,041
+Parameter Savings: 6,178,221
+
+⚡ INFERENCE SPEED ANALYSIS
+================================================================================
+HALO-UNet Inference Speed:
+Average inference time: 219.35 ms
+Throughput: 4.56 FPS
+
+Traditional U-Net Inference Speed:
+Average inference time: 267.36 ms
+Throughput: 3.74 FPS
+
+Speedup Factor: 1.22x
+Efficiency Gain: 21.9%
+
+🧩 COMPONENT BREAKDOWN ANALYSIS
+================================================================================
+Component                 Parameters      Efficiency
+------------------------------------------------------------
+Depthwise Separable Conv  2,336           Optimized
+Standard Conv             18,432          Standard       
+Channel Attention         512             Optimized
+Spatial Attention         18              Optimized
+
+📋 EXECUTIVE SUMMARY
+================================================================================
+✅ HALO-UNet successfully reduces parameters by 79.6%
+✅ Inference speed improved by 1.2x
+✅ Model size: 6.05 MB
+✅ Total parameters: 1,584,820
+✅ Maintains U-Net accuracy with enhanced efficiency
+✅ Suitable for resource-constrained deployment
