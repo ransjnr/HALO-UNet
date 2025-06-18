@@ -25,10 +25,10 @@ IMAGE_HEIGHT = 256  # Standard size for ultrasound images
 IMAGE_WIDTH = 256
 PIN_MEMORY = True
 LOAD_MODEL = False
-TRAIN_IMG_DIR = "data/train_images/"
-TRAIN_MASK_DIR = "data/train_masks/"
-VAL_IMG_DIR = "data/val_images/"
-VAL_MASK_DIR = "data/val_masks/"
+TRAIN_IMG_DIR = "data/trainval-image/"
+TRAIN_MASK_DIR = "data/trainval-mask/"
+VAL_IMG_DIR = "data/test-image/"
+VAL_MASK_DIR = "data/test-mask/"
 
 # DNAP Configuration
 DNAP_CONFIG = {
