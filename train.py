@@ -1,4 +1,5 @@
 import torch
+import multiprocessing
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 import torch.nn as nn
@@ -15,12 +16,16 @@ from utils import (
     save_predictions_as_imgs,
 )
 
+# Fix for CUDA multiprocessing issue
+if torch.cuda.is_available():
+    multiprocessing.set_start_method('spawn', force=True)
+
 # Hyperparameters
 LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 16
 NUM_EPOCHS = 50
-NUM_WORKERS = 2
+NUM_WORKERS = 0  # Set to 0 to avoid CUDA multiprocessing issues
 IMAGE_HEIGHT = 256  # Standard size for ultrasound images
 IMAGE_WIDTH = 256
 PIN_MEMORY = True
@@ -171,7 +176,7 @@ def get_ultrasound_loaders(
     batch_size,
     train_transform,
     val_transform,
-    num_workers=4,
+            num_workers=0,  # Set to 0 to avoid CUDA multiprocessing issues
     pin_memory=True,
     use_dnap=True,
     dnap_config=None,

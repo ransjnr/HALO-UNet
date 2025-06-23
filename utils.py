@@ -20,7 +20,7 @@ def get_loaders(
     batch_size,
     train_transform,
     val_transform,
-    num_workers=4,
+            num_workers=0,  # Set to 0 to avoid CUDA multiprocessing issues
     pin_memory=True,
 ):
     """Legacy function for compatibility."""

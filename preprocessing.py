@@ -67,12 +67,18 @@ class DynamicNoiseAdaptivePreprocessing:
         Returns:
             Denoised image as numpy array (H, W, C)
         """
+        if self.autoencoder is None:
+            return image
+        
         # Convert to tensor and normalize
         if image.dtype != np.float32:
             image = image.astype(np.float32) / 255.0
         
-        # Convert to tensor format (1, C, H, W)
-        image_tensor = torch.from_numpy(image.transpose(2, 0, 1)).unsqueeze(0).to(self.device)
+        # Convert to tensor format (1, C, H, W) on CPU first to avoid multiprocessing issues
+        image_tensor = torch.from_numpy(image.transpose(2, 0, 1)).unsqueeze(0).float()
+        
+        # Move to device if available (only happens in main process now with num_workers=0)
+        image_tensor = image_tensor.to(self.device)
         
         with torch.no_grad():
             denoised_tensor = self.autoencoder(image_tensor)
