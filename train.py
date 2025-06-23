@@ -17,13 +17,13 @@ from utils import (
 
 # Hyperparameters
 LEARNING_RATE = 1e-4
-DEVICE = "cpu"
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 16
 NUM_EPOCHS = 50
 NUM_WORKERS = 2
 IMAGE_HEIGHT = 256  # Standard size for ultrasound images
 IMAGE_WIDTH = 256
-PIN_MEMORY = False
+PIN_MEMORY = True
 LOAD_MODEL = False
 TRAIN_IMG_DIR = "data/trainval-image/"
 TRAIN_MASK_DIR = "data/trainval-mask/"
@@ -123,6 +123,7 @@ def train_halo_unet():
         load_checkpoint(torch.load("my_checkpoint.pth.tar"), model)
 
     check_accuracy(val_loader, model, device=DEVICE)
+    scaler = torch.cuda.amp.GradScaler()
 
     for epoch in range(NUM_EPOCHS):
         print(f"Epoch {epoch+1}/{NUM_EPOCHS}")
@@ -133,14 +134,16 @@ def train_halo_unet():
             data = data.to(device=DEVICE)
             targets = targets.float().unsqueeze(1).to(device=DEVICE)
 
-            # Forward pass (removed mixed precision for CPU)
-            predictions = model(data)
-            loss = loss_fn(predictions, targets)
+            # Forward pass with mixed precision
+            with torch.cuda.amp.autocast():
+                predictions = model(data)
+                loss = loss_fn(predictions, targets)
 
             # Backward pass
             optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
 
             # Update progress bar
             loop.set_postfix(loss=loss.item())

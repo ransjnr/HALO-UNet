@@ -108,7 +108,7 @@ def calculate_metrics(predictions, targets, threshold=0.5):
         'tn': tn.item()
     }
 
-def check_accuracy(loader, model, device="cpu"):
+def check_accuracy(loader, model, device="cuda"):
     """Enhanced accuracy checking with medical image metrics."""
     model.eval()
     
@@ -157,7 +157,7 @@ def check_accuracy(loader, model, device="cpu"):
     model.train()
     return avg_metrics
 
-def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cpu"):
+def save_predictions_as_imgs(loader, model, folder="saved_images/", device="cuda"):
     """Save predictions with better visualization for medical images."""
     model.eval()
     for idx, (x, y) in enumerate(loader):
@@ -210,7 +210,7 @@ def calculate_model_parameters(model):
     
     return total_params, trainable_params
 
-def test_model_inference_speed(model, input_shape=(1, 3, 256, 256), device="cpu", num_runs=100):
+def test_model_inference_speed(model, input_shape=(1, 3, 256, 256), device="cuda", num_runs=100):
     """Test model inference speed."""
     model.eval()
     model.to(device)
@@ -221,7 +221,8 @@ def test_model_inference_speed(model, input_shape=(1, 3, 256, 256), device="cpu"
         with torch.no_grad():
             _ = model(dummy_input)
     
-    # Time inference (removed CUDA synchronization)
+    # Time inference
+    torch.cuda.synchronize() if device == "cuda" else None
     import time
     start_time = time.time()
     
@@ -229,7 +230,7 @@ def test_model_inference_speed(model, input_shape=(1, 3, 256, 256), device="cpu"
         with torch.no_grad():
             _ = model(dummy_input)
     
-    # Removed CUDA synchronization for CPU
+    torch.cuda.synchronize() if device == "cuda" else None
     end_time = time.time()
     
     avg_time = (end_time - start_time) / num_runs
