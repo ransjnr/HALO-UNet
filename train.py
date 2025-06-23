@@ -24,7 +24,7 @@ if torch.cuda.is_available():
 LEARNING_RATE = 1e-4
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 BATCH_SIZE = 16
-NUM_EPOCHS = 50
+NUM_EPOCHS = 15
 NUM_WORKERS = 0  # Set to 0 to avoid CUDA multiprocessing issues
 IMAGE_HEIGHT = 256  # Standard size for ultrasound images
 IMAGE_WIDTH = 256
