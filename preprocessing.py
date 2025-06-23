@@ -18,7 +18,7 @@ class DynamicNoiseAdaptivePreprocessing:
     """
     
     def __init__(self, 
-                 device: str = "cuda",
+                 device: str = "cpu",
                  autoencoder_path: str = None,
                  bilateral_d: int = 10,
                  bilateral_sigma_color: float = 10.0,
@@ -227,7 +227,7 @@ def train_denoising_autoencoder(
     dataloader,
     num_epochs: int = 50,
     learning_rate: float = 1e-3,
-    device: str = "cuda",
+    device: str = "cpu",
     save_path: str = "denoising_autoencoder.pth"
 ):
     """
